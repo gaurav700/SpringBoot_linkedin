@@ -1,15 +1,11 @@
 package com.LinkedIn.postService.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "posts")
 public class Post {
     @Id
@@ -24,4 +20,37 @@ public class Post {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }

@@ -1,11 +1,9 @@
 package com.LinkedIn.postService.Advice;
 
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-@Data
 public class ApiError {
     private LocalDateTime timeStamp;
     private String error;
@@ -19,5 +17,38 @@ public class ApiError {
         this();
         this.error = error;
         this.httpStatus = httpStatus;
+    }
+
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "ApiError{" +
+                "timeStamp=" + timeStamp +
+                ", error='" + error + '\'' +
+                ", httpStatus=" + httpStatus +
+                '}';
     }
 }
