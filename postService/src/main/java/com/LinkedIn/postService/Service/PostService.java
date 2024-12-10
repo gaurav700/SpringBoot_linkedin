@@ -9,6 +9,9 @@ import com.LinkedIn.postService.Repository.PostsRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PostService {
 
@@ -31,5 +34,13 @@ public class PostService {
     public PostCreatedDto getPost(Long postId) {
         Post post = postsRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found with id: "+postId));
         return modelMapper.map(post, PostCreatedDto.class);
+    }
+
+    public List<PostCreatedDto> getAllPostByUserId(Long userId) {
+        List<Post> posts = postsRepository.findByUserId(userId);
+        return posts
+                .stream()
+                .map(element-> modelMapper.map(element, PostCreatedDto.class))
+                .collect(Collectors.toList());
     }
 }

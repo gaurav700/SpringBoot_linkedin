@@ -8,6 +8,7 @@ import com.LinkedIn.postService.Repository.PostsLikeRepository;
 import com.LinkedIn.postService.Repository.PostsRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostLikeService {
@@ -39,4 +40,20 @@ public class PostLikeService {
         PostLike liked = postsLikeRepository.save(postLike);
         return modelMapper.map(liked, PostLikeDto.class);
     }
+
+    @Transactional
+    public void disLikePost(Long postId, long userId) {
+        boolean existPost = postsRepository.existsById(postId);
+        if (!existPost) {
+            throw new ResourceNotFoundException("Post with id: " + postId + " not found");
+        }
+
+        boolean alreadyLiked = postsLikeRepository.existsByUserIdAndPostId(userId, postId);
+        if (!alreadyLiked) {
+            throw new BadRequestException("This post is not liked by the user, you cannot dislike it");
+        }
+
+        postsLikeRepository.deleteByUserIdAndPostId(userId, postId);
+    }
+
 }

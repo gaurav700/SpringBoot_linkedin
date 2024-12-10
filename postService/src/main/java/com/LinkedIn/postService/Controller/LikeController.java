@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/like")
+@RequestMapping("/likes")
 public class LikeController {
 
     private final PostLikeService postLikeService;
@@ -19,9 +19,16 @@ public class LikeController {
         this.postLikeService = postLikeService;
     }
 
-    @PostMapping("/{postId}")
+    @PostMapping("/{postId}/like")
     public ResponseEntity<PostLikeDto> likePost(@PathVariable Long postId){
         PostLikeDto like = postLikeService.likePost(postId, 1L);
         return ResponseEntity.ok(like);
     }
+
+    @PostMapping("/{postId}/dislike")
+    public ResponseEntity<String> disLikePost(@PathVariable Long postId){
+        postLikeService.disLikePost(postId, 1L);
+        return ResponseEntity.ok("Post has been disliked successfully");
+    }
+
 }
