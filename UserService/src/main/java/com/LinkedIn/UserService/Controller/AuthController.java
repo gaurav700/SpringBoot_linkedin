@@ -1,5 +1,7 @@
 package com.LinkedIn.UserService.Controller;
 
+import com.LinkedIn.UserService.DTO.LoginRequestDto;
+import com.LinkedIn.UserService.DTO.LoginResponseDto;
 import com.LinkedIn.UserService.DTO.SignUpRequestDto;
 import com.LinkedIn.UserService.DTO.SignUpResponseDto;
 import com.LinkedIn.UserService.Service.AuthService;
@@ -25,4 +27,11 @@ public class AuthController {
         SignUpResponseDto sign = authService.signUp(signUpRequestDto);
         return new ResponseEntity<>(sign, HttpStatus.CREATED);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> signUp(@RequestBody LoginRequestDto loginRequestDto){
+        LoginResponseDto login = authService.login(loginRequestDto);
+        return ResponseEntity.ok(login);
+    }
+
 }
