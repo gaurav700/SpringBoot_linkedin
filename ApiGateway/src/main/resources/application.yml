@@ -2,6 +2,10 @@ spring.application.name: ApiGateway
 
 server.port: 8080
 
+# jwt secret key
+jwt:
+  secretKey: dakfjladsjflajsdfljasdlfjadslgvhnkjabrkgjvhjkfbrfbdkj
+
 # eureka client configurations
 eureka:
   client:
@@ -27,6 +31,7 @@ spring:
             - Path=/api/v1/posts/**
           filters:
             - StripPrefix=2
+            - name: AuthFilter
 
         - id: ConnectionService
           uri: lb://CONNECTIONSERVICE
@@ -34,4 +39,5 @@ spring:
             - Path=/api/v1/connections/**
           filters:
             - StripPrefix=2
+            - name: AuthFilter
 
