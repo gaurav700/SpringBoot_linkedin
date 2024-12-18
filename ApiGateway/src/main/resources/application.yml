@@ -41,3 +41,76 @@ spring:
             - StripPrefix=2
             - name: AuthFilter
 
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        # Api gateway route for UserService
+#        - id: UserService
+#          uri: lb://USERSERVICE
+#          predicates:
+#            - Path=/api/v1/users/**
+#          filters:
+#            - StripPrefix=2
+#        # Swagger Route for UserService
+#        - id: UserService-Swagger
+#          uri: lb://USERSERVICE
+#          predicates:
+#            - Path=/v3/api-docs/users
+#          filters:
+#            - StripPrefix=1
+#
+#        # Api gateway route for PostService
+#        - id: PostService
+#          uri: lb://POSTSERVICE
+#          predicates:
+#            - Path=/api/v1/posts/**
+#          filters:
+#            - StripPrefix=2
+#            - name: AuthFilter
+#        # Swagger Route for PostService
+#        - id: PostService-Swagger
+#          uri: lb://POSTSERVICE
+#          predicates:
+#            - Path=/v3/api-docs/posts
+#          filters:
+#            - StripPrefix=1
+#
+#        # Api gateway route for ConnectionService
+#        - id: ConnectionService
+#          uri: lb://CONNECTIONSERVICE
+#          predicates:
+#            - Path=/api/v1/connections/**
+#          filters:
+#            - StripPrefix=2
+#            - name: AuthFilter
+#        # Swagger Route for ConnectionService
+#        - id: ConnectionService-Swagger
+#          uri: lb://CONNECTIONSERVICE
+#          predicates:
+#            - Path=/v3/api-docs/connections
+#          filters:
+#            - StripPrefix=1
+
+
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /connections/ConnectionService/v3/api-docs
+        name: Connection Service
+      - url: /posts/PostService/v3/api-docs
+        name: Post Service
+      - url: /users/UserService/v3/api-docs
+        name: User Service
+
+
+
+
+
