@@ -1,5 +1,8 @@
 package com.LinkedIn.postService.Service;
 
+import com.LinkedIn.postService.Auth.UserContextHolder;
+import com.LinkedIn.postService.Clients.ConnectionClient;
+import com.LinkedIn.postService.DTO.PersonDto;
 import com.LinkedIn.postService.DTO.PostCreateDto;
 import com.LinkedIn.postService.DTO.PostCreatedDto;
 import com.LinkedIn.postService.DTO.PostLikeDto;
@@ -17,14 +20,18 @@ public class PostService {
 
     private final PostsRepository postsRepository;
     private final ModelMapper modelMapper;
+    private final ConnectionClient connectionClient;
 
-    public PostService(PostsRepository postsRepository, ModelMapper modelMapper) {
+    public PostService(PostsRepository postsRepository, ModelMapper modelMapper, ConnectionClient connectionClient) {
         this.postsRepository = postsRepository;
         this.modelMapper = modelMapper;
+        this.connectionClient = connectionClient;
     }
 
-    public PostCreatedDto createPost(PostCreateDto postCreateDto, Long userId) {
+    public PostCreatedDto createPost(PostCreateDto postCreateDto) {
         Post post = modelMapper.map(postCreateDto, Post.class);
+
+        Long userId = UserContextHolder.getCurrentUserId();
         post.setUserId(userId);
 
         Post savedPost = postsRepository.save(post);
@@ -32,6 +39,10 @@ public class PostService {
     }
 
     public PostCreatedDto getPost(Long postId) {
+        Long userId = UserContextHolder.getCurrentUserId();
+        List<PersonDto> firstConnections = connectionClient.getFirstConnections(userId);
+
+        // TODO send noti fications to all connections
         Post post = postsRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found with id: "+postId));
         return modelMapper.map(post, PostCreatedDto.class);
     }
