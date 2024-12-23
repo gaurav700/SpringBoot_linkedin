@@ -11,6 +11,6 @@ import java.util.List;
 @FeignClient(name = "ConnectionService", path = "/connections")
 public interface ConnectionClient {
 
-    @GetMapping("/core/{userId}/firstDegree")
-    List<PersonDto> getFirstConnections(@PathVariable Long userId);
+    @GetMapping("/core/firstDegree")
+    List<PersonDto> getFirstConnections();
 }

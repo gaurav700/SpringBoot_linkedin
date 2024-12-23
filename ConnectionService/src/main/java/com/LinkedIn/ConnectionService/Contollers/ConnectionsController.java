@@ -2,6 +2,7 @@ package com.LinkedIn.ConnectionService.Contollers;
 
 import com.LinkedIn.ConnectionService.DTO.PersonDto;
 import com.LinkedIn.ConnectionService.Service.ConnectionService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,8 @@ public class ConnectionsController {
     }
 
     @GetMapping("/firstDegree")
-    public ResponseEntity<List<PersonDto>> getFirstConnections(@RequestHeader("UserId") Long userId){
-        return ResponseEntity.ok(connectionService.getFirstDegreeConnections(userId));
+    public ResponseEntity<List<PersonDto>> getFirstConnections(){
+        return ResponseEntity.ok(connectionService.getFirstDegreeConnections());
     }
 
 }
