@@ -21,13 +21,13 @@ public class LikeController {
 
     @PostMapping("/{postId}/like")
     public ResponseEntity<PostLikeDto> likePost(@PathVariable Long postId){
-        PostLikeDto like = postLikeService.likePost(postId, 1L);
+        PostLikeDto like = postLikeService.likePost(postId);
         return ResponseEntity.ok(like);
     }
 
     @PostMapping("/{postId}/dislike")
     public ResponseEntity<String> disLikePost(@PathVariable Long postId){
-        postLikeService.disLikePost(postId, 1L);
+        postLikeService.disLikePost(postId);
         return ResponseEntity.ok("Post has been disliked successfully");
     }
 

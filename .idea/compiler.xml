@@ -17,6 +17,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="ConnectionService" />
+        <module name="NotificationService" />
         <module name="postService" />
         <module name="UserService" />
         <module name="ApiGateway" />
@@ -28,6 +29,7 @@
       <module name="ApiGateway" options="-parameters" />
       <module name="ConnectionService" options="-parameters" />
       <module name="DiscoveryServer" options="-parameters" />
+      <module name="NotificationService" options="-parameters" />
       <module name="UserService" options="-parameters" />
       <module name="postService" options="-parameters" />
     </option>

@@ -1,12 +1,16 @@
 package com.LinkedIn.postService.Service;
 
+import com.LinkedIn.postService.Auth.UserContextHolder;
 import com.LinkedIn.postService.DTO.PostLikeDto;
+import com.LinkedIn.postService.Entity.Post;
 import com.LinkedIn.postService.Entity.PostLike;
+import com.LinkedIn.postService.Events.PostLikedEvent;
 import com.LinkedIn.postService.Exceptions.BadRequestException;
 import com.LinkedIn.postService.Exceptions.ResourceNotFoundException;
 import com.LinkedIn.postService.Repository.PostsLikeRepository;
 import com.LinkedIn.postService.Repository.PostsRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +20,20 @@ public class PostLikeService {
     private  final PostsLikeRepository postsLikeRepository;
     private final PostsRepository postsRepository;
     private final ModelMapper modelMapper;
+    private final KafkaTemplate<Long, PostLikedEvent> kafkaTemplate;
 
-    public PostLikeService(PostsLikeRepository postsLikeRepository, PostsRepository postsRepository, ModelMapper modelMapper) {
+    public PostLikeService(PostsLikeRepository postsLikeRepository, PostsRepository postsRepository, ModelMapper modelMapper, KafkaTemplate<Long, PostLikedEvent> kafkaTemplate) {
         this.postsLikeRepository = postsLikeRepository;
         this.postsRepository = postsRepository;
         this.modelMapper = modelMapper;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
-    public PostLikeDto likePost(Long postId, long userId) {
-        boolean existPost = postsRepository.existsById(postId);
-        if(!existPost){
+    public PostLikeDto likePost(Long postId) {
+        Long userId = UserContextHolder.getCurrentUserId();
+
+        Post post = postsRepository.findById(postId).orElse(null);
+        if(post==null){
             throw new ResourceNotFoundException("Post with id : "+postId+" not found");
         }
 
@@ -38,11 +46,22 @@ public class PostLikeService {
         postLike.setPostId(postId);
         postLike.setUserId(userId);
         PostLike liked = postsLikeRepository.save(postLike);
+
+        // building the postlikedevent for kakfa
+        PostLikedEvent postLikedEvent = new PostLikedEvent();
+        postLikedEvent.setPostId(liked.getPostId());
+        postLikedEvent.setCreatorId(post.getUserId());
+        postLikedEvent.setLikedByUserId(userId);
+
+        kafkaTemplate.send("Post-liked-topic", postId, postLikedEvent);
+
         return modelMapper.map(liked, PostLikeDto.class);
     }
 
     @Transactional
-    public void disLikePost(Long postId, long userId) {
+    public void disLikePost(Long postId) {
+        Long userId = UserContextHolder.getCurrentUserId();
+
         boolean existPost = postsRepository.existsById(postId);
         if (!existPost) {
             throw new ResourceNotFoundException("Post with id: " + postId + " not found");
