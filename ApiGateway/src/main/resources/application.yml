@@ -21,7 +21,7 @@ spring:
         - id: UserService
           uri: lb://USERSERVICE
           predicates:
-            - Path=/api/v1/users/**
+            - Path=/api/v1/auth/**
           filters:
             - StripPrefix=2
 
@@ -29,6 +29,7 @@ spring:
           uri: lb://POSTSERVICE
           predicates:
             - Path=/api/v1/posts/**
+            - Path=/api/v1/likes/**
           filters:
             - StripPrefix=2
             - name: AuthFilter

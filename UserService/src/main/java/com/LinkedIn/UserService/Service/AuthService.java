@@ -42,7 +42,9 @@ public class AuthService {
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         User user = authRepository.findByEmail(loginRequestDto.getEmail()).orElseThrow(()->
                 new ResourceNotFoundException("User with this email id : "+loginRequestDto.getEmail()+" not exists"));
+
         boolean passwordCheck = PasswordUtil.checkPassword(loginRequestDto.getPassword(), user.getPassword());
+
         if(!passwordCheck){
             throw new BadRequestException("The password you entered is incorrect");
         }

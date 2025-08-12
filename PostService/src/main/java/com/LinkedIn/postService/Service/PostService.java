@@ -10,6 +10,7 @@ import com.LinkedIn.postService.Entity.Post;
 import com.LinkedIn.postService.Events.PostCreatedEvent;
 import com.LinkedIn.postService.Exceptions.ResourceNotFoundException;
 import com.LinkedIn.postService.Repository.PostsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PostService {
 
     private final PostsRepository postsRepository;
@@ -33,6 +35,7 @@ public class PostService {
     }
 
     public PostCreatedDto createPost(PostCreateDto postCreateDto) {
+        log.info("Creating post for user.....");
         Post post = modelMapper.map(postCreateDto, Post.class);
 
         Long userId = UserContextHolder.getCurrentUserId();
@@ -52,11 +55,13 @@ public class PostService {
     }
 
     public PostCreatedDto getPost(Long postId) {
+        log.info("Getting post of the user with post id....");
         Post post = postsRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found with id: "+postId));
         return modelMapper.map(post, PostCreatedDto.class);
     }
 
     public List<PostCreatedDto> getAllPostByUserId(Long userId) {
+        log.info("Getting all the post of the user with user id.......");
         List<Post> posts = postsRepository.findByUserId(userId);
         return posts
                 .stream()

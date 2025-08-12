@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/core")
+@RequestMapping("/connections")
 public class ConnectionsController {
 
     private final ConnectionService connectionService;
