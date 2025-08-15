@@ -17,7 +17,11 @@ public class ConnectionServiceConsumer {
         this.sendNotificationService = sendNotificationService;
     }
 
-    @KafkaListener(topics = "Send-connection-request-topic", groupId = "notification-service")
+    @KafkaListener(
+            topics = "Send-connection-request-topic",
+            groupId = "notification-service",
+            properties = "spring.json.value.default.type=com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent"
+    )
     public void handleSendConnectionRequest(SendConnectionRequestEvent event) {
         Long receiverId = event.getReceiverId();
         Long senderId = event.getSenderId();
@@ -33,24 +37,23 @@ public class ConnectionServiceConsumer {
         }
     }
 
-    @KafkaListener(topics = "Accept-connection-request-topic", groupId = "notification-service")
+    @KafkaListener(
+            topics = "Accept-connection-request-topic",
+            groupId = "notification-service",
+            properties = "spring.json.value.default.type=com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent"
+    )
     public void handleAcceptConnectionRequest(AcceptConnectionRequestEvent event) {
         Long receiverId = event.getReceiverId();
         Long senderId = event.getSenderId();
 
         String message = String.format("User %d accepted your connection request.", receiverId);
-        // NOTE: Typically, you notify the *sender* that their request was accepted.
-        // If your event has `receiverId` = acceptor and `senderId` = original requester,
-        // you probably want to send the notification to `senderId`.
-
         log.info("Notify user={} that their request was accepted by user={}", senderId, receiverId);
 
         try {
             sendNotificationService.send(senderId, message);
             log.info("Notification sent successfully to user={}", senderId);
         } catch (Exception ex) {
-            log.error("Failed to send acceptance notification to user={} (accepted by={})",
-                    senderId, receiverId, ex);
+            log.error("Failed to send acceptance notification to user={} (accepted by={})", senderId, receiverId, ex);
         }
     }
 }

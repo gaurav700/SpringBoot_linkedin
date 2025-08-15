@@ -25,7 +25,11 @@ public class PostsServiceConsumer {
         this.sendNotificationService = sendNotificationService;
     }
 
-    @KafkaListener(topics = "Post-created-topic", groupId = "notification-service")
+    @KafkaListener(
+            topics = "Post-created-topic",
+            groupId = "notification-service",
+            properties = "spring.json.value.default.type=com.LinkedIn.PostService.Events.PostCreatedEvent"
+    )
     public void handlePostCreated(PostCreatedEvent event) {
         if (event == null || event.getCreatorId() == null) {
             log.warn("Received null/invalid PostCreatedEvent: {}", event);
@@ -65,7 +69,11 @@ public class PostsServiceConsumer {
         }
     }
 
-    @KafkaListener(topics = "Post-liked-topic", groupId = "notification-service")
+    @KafkaListener(
+            topics = "Post-liked-topic",
+            groupId = "notification-service",
+            properties = "spring.json.value.default.type=com.LinkedIn.PostService.Events.PostLikedEvent"
+    )
     public void handlePostLiked(PostLikedEvent event) {
         if (event == null || event.getCreatorId() == null || event.getPostId() == null) {
             log.warn("Received null/invalid PostLikedEvent: {}", event);
@@ -79,9 +87,7 @@ public class PostsServiceConsumer {
         log.info("Handling PostLikedEvent: postId={}, creatorId={}, likedBy={}",
                 postId, creatorId, likedBy);
 
-        String message = String.format(
-                "Your post %d was liked by user %d.", postId, likedBy
-        );
+        String message = String.format("Your post %d was liked by user %d.", postId, likedBy);
 
         try {
             sendNotificationService.send(creatorId, message);

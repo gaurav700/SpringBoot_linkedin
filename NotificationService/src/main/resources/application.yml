@@ -1,52 +1,26 @@
 #spring:
 #  kafka:
-#    bootstrap-servers: localhost:9092
+#    bootstrap-servers: localhost:9093
 #    consumer:
-#      group-id: "${spring.application.name}"
-#      # pick deserializers that match your topic
+#      group-id: ${spring.application.name}
 #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 #      properties:
 #        spring.json.trusted.packages: com.LinkedIn.*
-
-
-#spring:
-#  kafka:
-#    bootstrap-servers: localhost:9092
-#    consumer:
-#      group-id: "${spring.application.name}"
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#      properties:
-#        spring.json.trusted.packages: com.LinkedIn.*
-#        # Map the incoming header to the correct local class
-#        spring.json.type.mapping: >
-#          PostCreatedEvent: com.LinkedIn.PostService.Events.PostCreatedEvent,
-#          PostLikedEvent: com.LinkedIn.PostService.Events.PostLikedEvent,
-#          com.LinkedIn.postService.Events.PostCreatedEvent: com.LinkedIn.PostService.Events.PostCreatedEvent,
-#          com.LinkedIn.postService.Events.PostLikedEvent: com.LinkedIn.PostService.Events.PostLikedEvent,
-#          SendConnectionRequestEvent: com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent,
-#          AcceptConnectionRequestEvent: com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent,
-#          com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent: com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent,
-#          com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent: com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent
-
+#        spring.json.use.type.headers: true
+#        spring.json.type.mapping: "PostCreatedEvent:com.LinkedIn.PostService.Events.PostCreatedEvent,PostLikedEvent:com.LinkedIn.PostService.Events.PostLikedEvent, com.LinkedIn.postService.Events.PostCreatedEvent:com.LinkedIn.PostService.Events.PostCreatedEvent,com.LinkedIn.postService.Events.PostLikedEvent:com.LinkedIn.PostService.Events.PostLikedEvent, SendConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent,AcceptConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent,com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent, com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent"
+#      auto-offset-reset: earliest
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
     consumer:
       group-id: ${spring.application.name}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: com.LinkedIn.*
-        spring.json.use.type.headers: false
-        spring.json.type.mapping: "
-        PostCreatedEvent:com.LinkedIn.PostService.Events.PostCreatedEvent,
-        PostLikedEvent:com.LinkedIn.PostService.Events.PostLikedEvent,
-        com.LinkedIn.postService.Events.PostCreatedEvent:com.LinkedIn.PostService.Events.PostCreatedEvent,
-        com.LinkedIn.postService.Events.PostLikedEvent:com.LinkedIn.PostService.Events.PostLikedEvent,
-        SendConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent,
-        AcceptConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent,
-        com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.SendConnectionRequestEvent,
-        com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent:com.LinkedIn.ConnectionService.Events.AcceptConnectionRequestEvent"
+        spring.json.use.type.headers: true
+      auto-offset-reset: earliest
