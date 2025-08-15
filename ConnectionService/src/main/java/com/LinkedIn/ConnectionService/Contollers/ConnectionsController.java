@@ -23,4 +23,6 @@ public class ConnectionsController {
         return ResponseEntity.ok(connectionService.getFirstDegreeConnections());
     }
 
+
+
 }

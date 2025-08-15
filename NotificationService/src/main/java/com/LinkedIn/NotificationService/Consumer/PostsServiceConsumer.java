@@ -6,12 +6,14 @@ import com.LinkedIn.NotificationService.Entity.Notification;
 import com.LinkedIn.NotificationService.Repository.NotificationRepository;
 import com.LinkedIn.PostService.Events.PostCreatedEvent;
 import com.LinkedIn.PostService.Events.PostLikedEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class PostsServiceConsumer {
 
     private final ConnectionClient connectionClient;
@@ -24,6 +26,8 @@ public class PostsServiceConsumer {
 
     @KafkaListener(topics = "Post-created-topic")
     public void handlePostCreated(PostCreatedEvent postCreatedEvent){
+        log.info("Sending notifications: handlePostCreated : {}", postCreatedEvent);
+        
         List<PersonDto> connections = connectionClient.getFirstConnections(postCreatedEvent.getCreatorId());
 
         for(PersonDto personDto : connections){
@@ -34,6 +38,8 @@ public class PostsServiceConsumer {
 
     @KafkaListener(topics = "Post-liked-topic")
     public void handlePostLiked(PostLikedEvent postLikedEvent){
+        log.info("Sending notifications: postLikedEvent : {}", postLikedEvent);
+        
         String message = "Hi, Your post '"+postLikedEvent.getPostId()+"' has been liked by "+postLikedEvent.getLikedByUserId()+".";
         sendNotifications(postLikedEvent.getCreatorId(), message);
     }

@@ -32,53 +32,64 @@ public class PostLikeService {
     }
 
     public PostLikeDto likePost(Long postId) {
-        log.info("Attempting to like the post with id : {}", postId);
+        log.info("Attempting to like the post with id: {}", postId);
 
         Long userId = UserContextHolder.getCurrentUserId();
+//        log.info("Current user id: {}", userId);
 
         Post post = postsRepository.findById(postId).orElse(null);
-        if(post==null){
-            throw new ResourceNotFoundException("Post with id : "+postId+" not found");
+        if (post == null) {
+            log.error("Like failed: Post with id {} not found", postId);
+            throw new ResourceNotFoundException("Post with id: " + postId + " not found");
         }
 
         boolean alreadyLiked = postsLikeRepository.existsByUserIdAndPostId(userId, postId);
-        if(alreadyLiked){
-            throw new BadRequestException("This post is already liked by the user, you are not allowed to like this again");
+        if (alreadyLiked) {
+            log.error("Like failed: User {} has already liked post {}", userId, postId);
+            throw new BadRequestException("This post is already liked by the user, you are not allowed to like it again");
         }
 
         PostLike postLike = new PostLike();
         postLike.setPostId(postId);
         postLike.setUserId(userId);
-        PostLike liked = postsLikeRepository.save(postLike);
 
-        // building the postlikedevent for kakfa
+        PostLike liked = postsLikeRepository.save(postLike);
+        log.info("Post {} liked successfully by user {}", postId, userId);
+
+        // Building and sending the event to Kafka
         PostLikedEvent postLikedEvent = new PostLikedEvent();
         postLikedEvent.setPostId(liked.getPostId());
         postLikedEvent.setCreatorId(post.getUserId());
         postLikedEvent.setLikedByUserId(userId);
 
         kafkaTemplate.send("Post-liked-topic", postId, postLikedEvent);
-        log.info("Like is successful for post with id : {}", postId);
+        log.info("PostLikedEvent sent to Kafka for postId: {}", postId);
+
         return modelMapper.map(liked, PostLikeDto.class);
     }
 
     @Transactional
     public void disLikePost(Long postId) {
-        log.info("Attempting to dislike the post with id : {}", postId);
+        log.info("Attempting to dislike the post with id: {}", postId);
+
         Long userId = UserContextHolder.getCurrentUserId();
+//        log.info("Current user id: {}", userId);
 
         boolean existPost = postsRepository.existsById(postId);
         if (!existPost) {
+            log.error("Dislike failed: Post with id {} not found", postId);
             throw new ResourceNotFoundException("Post with id: " + postId + " not found");
         }
 
         boolean alreadyLiked = postsLikeRepository.existsByUserIdAndPostId(userId, postId);
         if (!alreadyLiked) {
+            log.error("Dislike failed: User {} has not liked post {}", userId, postId);
             throw new BadRequestException("This post is not liked by the user, you cannot dislike it");
         }
 
         postsLikeRepository.deleteByUserIdAndPostId(userId, postId);
-        log.info("Dislike is successful for post with id : {}", postId);
+        log.info("Post {} disliked successfully by user {}", postId, userId);
     }
+
 
 }

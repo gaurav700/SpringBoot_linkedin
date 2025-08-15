@@ -1,10 +1,27 @@
+#spring:
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    consumer:
+#      group-id: "${spring.application.name}"
+#      # pick deserializers that match your topic
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring.json.trusted.packages: com.LinkedIn.*
+
+
 spring:
-  kakfa:
-    bootstrap-server: localhost:9092
+  kafka:
+    bootstrap-servers: localhost:9092
     consumer:
-      group-id: %{spring.application.name}
-      key-serializer: org.apache.kafka.common.serialization.LongSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      group-id: "${spring.application.name}"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json:
-          trusted.packages: com.LinkedIn.*
+        spring.json.trusted.packages: com.LinkedIn.*
+        # Map the incoming header to the correct local class
+        spring.json.type.mapping: >
+          PostCreatedEvent: com.LinkedIn.PostService.Events.PostCreatedEvent,
+          PostLikedEvent: com.LinkedIn.PostService.Events.PostLikedEvent,
+          com.LinkedIn.postService.Events.PostCreatedEvent: com.LinkedIn.PostService.Events.PostCreatedEvent,
+          com.LinkedIn.postService.Events.PostLikedEvent: com.LinkedIn.PostService.Events.PostLikedEvent

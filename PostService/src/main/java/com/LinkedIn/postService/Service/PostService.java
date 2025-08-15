@@ -35,37 +35,50 @@ public class PostService {
     }
 
     public PostCreatedDto createPost(PostCreateDto postCreateDto) {
-        log.info("Creating post for user.....");
+        log.info("Attempting to create post for current user...");
+
         Post post = modelMapper.map(postCreateDto, Post.class);
-
         Long userId = UserContextHolder.getCurrentUserId();
+//        log.info("Mapped PostCreateDto to Post entity for userId: {}", userId);
+
         post.setUserId(userId);
-
         Post savedPost = postsRepository.save(post);
+        log.info("Post created successfully with id: {} for userId: {}", savedPost.getId(), userId);
 
+        // Build and send Kafka event
         PostCreatedEvent postCreatedEvent = new PostCreatedEvent();
         postCreatedEvent.setPostId(savedPost.getId());
         postCreatedEvent.setCreatorId(userId);
         postCreatedEvent.setContent(savedPost.getContent());
 
         kafkaTemplate.send("Post-created-topic", postCreatedEvent);
-
+        log.info("PostCreatedEvent sent to Kafka for postId: {}", savedPost.getId());
 
         return modelMapper.map(savedPost, PostCreatedDto.class);
     }
 
     public PostCreatedDto getPost(Long postId) {
-        log.info("Getting post of the user with post id....");
-        Post post = postsRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found with id: "+postId));
+        log.info("Fetching post with id: {}", postId);
+
+        Post post = postsRepository.findById(postId).orElseThrow(() -> {
+            log.error("Post not found with id: {}", postId);
+            return new ResourceNotFoundException("Post not found with id: " + postId);
+        });
+
+        log.info("Post retrieved successfully with id: {}", postId);
         return modelMapper.map(post, PostCreatedDto.class);
     }
 
     public List<PostCreatedDto> getAllPostByUserId(Long userId) {
-        log.info("Getting all the post of the user with user id.......");
+        log.info("Fetching all posts for userId: {}", userId);
+
         List<Post> posts = postsRepository.findByUserId(userId);
+        log.info("Found {} posts for userId: {}", posts.size(), userId);
+
         return posts
                 .stream()
-                .map(element-> modelMapper.map(element, PostCreatedDto.class))
+                .map(element -> modelMapper.map(element, PostCreatedDto.class))
                 .collect(Collectors.toList());
     }
+
 }

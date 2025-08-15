@@ -1,21 +1,10 @@
-spring.application.name: ApiGateway
-
-server.port: 8080
-
-# jwt secret key
-jwt:
-  secretKey: dakfjladsjflajsdfljasdlfjadslgvhnkjabrkgjvhjkfbrfbdkj
-
-# eureka client configurations
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-
-# routes, predicates, filters
 spring:
+  application:
+    name: ApiGateway
+
   cloud:
+    client:
+      hostname: localhost
     gateway:
       routes:
         - id: UserService
@@ -25,11 +14,11 @@ spring:
           filters:
             - StripPrefix=2
 
+        # Use ONE Path predicate with multiple patterns (comma-separated)
         - id: PostService
           uri: lb://POSTSERVICE
           predicates:
-            - Path=/api/v1/posts/**
-            - Path=/api/v1/likes/**
+            - Path=/api/v1/posts/**, /api/v1/likes/**
           filters:
             - StripPrefix=2
             - name: AuthFilter
@@ -42,8 +31,34 @@ spring:
             - StripPrefix=2
             - name: AuthFilter
 
+server:
+  port: 8080
 
+jwt:
+  secretKey: dakfjladsjflajsdfljasdlfjadslgvhnkjabrkgjvhjkfbrfbdkjdfsfsdgsdfgsfdgadfgvsdfgerh45565rtgsfdv
 
+  # 2) Base64-encoded key (set the flag below to true)
+  # secretKey: "Jm3lNw...base64..."
+  secretKeyBase64: false
 
+  # Accept small clock drift between services
+  clockSkewSeconds: 60
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    hostname: localhost
+    instance-id: "${spring.application.name}:${server.port}"
+    non-secure-port: 8080
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
