@@ -47,15 +47,15 @@ jwt:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://DiscoveryServer:8761/eureka
     register-with-eureka: true
     fetch-registry: true
-  instance:
-    prefer-ip-address: true
-    ip-address: 127.0.0.1
-    hostname: localhost
-    instance-id: "${spring.application.name}:${server.port}"
-    non-secure-port: 8080
+#  instance:
+#    prefer-ip-address: true
+#    ip-address: 127.0.0.1
+#    hostname: localhost
+#    instance-id: "${spring.application.name}:${server.port}"
+#    non-secure-port: 8080
 
 management:
   endpoints:
