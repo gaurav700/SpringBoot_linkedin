@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="UploaderService" />
         <module name="DiscoveryServer" />
       </profile>
       <profile name="Annotation profile for ConnectionService" enabled="true">
@@ -30,6 +31,7 @@
       <module name="ConnectionService" options="-parameters" />
       <module name="DiscoveryServer" options="-parameters" />
       <module name="NotificationService" options="-parameters" />
+      <module name="UploaderService" options="-parameters" />
       <module name="UserService" options="-parameters" />
       <module name="postService" options="-parameters" />
     </option>

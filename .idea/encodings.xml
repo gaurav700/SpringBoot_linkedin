@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/DiscoveryServer/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/NotificationService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/PostService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/UploaderService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/UserService/src/main/java" charset="UTF-8" />
   </component>
 </project>
