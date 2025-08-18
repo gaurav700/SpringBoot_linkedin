@@ -1,0 +1,25 @@
+spring.application.name: UploaderService
+
+server.port: 9050
+eureka.client.service-url.defaultZone: http://DiscoveryServer:8761/eureka
+
+cloudinary:
+  cloud-name: <your - cloud - name>
+  api-key: <your - api - key>
+  api-secret: <your - api - secret>
+
+gcs:
+  bucket-name: cs-linkedin-prod   # ✅ Your GCS bucket name (safe to keep)
+  access-account: >
+    {
+      "type": ""                     # e.g., "service_account"
+      "project_id": ""               # Your GCP project ID
+      "private_key_id": ""           # ⚠️ DO NOT commit the real private key ID
+      "private_key": ""              # ⚠️ DO NOT commit the real private key
+      "client_id": ""                # Service account client ID
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth"
+      "token_uri": "https://oauth2.googleapis.com/token"
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs"
+      "client_x509_cert_url": ""     # Auto-generated, but still sensitive
+      "universe_domain": "googleapis.com"
+    }
