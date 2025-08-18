@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  connections-db:
+    image: neo4j
+    container_name: connections-db
+    environment:
+      - NEO4J_AUTH=neo4j/password  # Set your username and password
+    ports:
+      - "7474:7474"  # HTTP port
+      - "7687:7687"  # Bolt port
+    volumes:
+      - connections-db-data:/data  # Persist data
+    networks:
+      - linkedin-network
+
+  discoveryserver:
+    image: gaurav375/linkedin-app/discoveryserver:dev
+    container_name: discoveryserver
+    networks:
+      - linkedin-network
+    ports:
+      - "8761:8761"
+
+  connectionsservice:
+    image: gaurav375/linkedin-app/connectionservice:dev
+    container_name: connectionsservice
+    networks:
+      - linkedin-network
+    depends_on:
+      - discoveryserver
+      - connections-db
+
+  apigateway:
+    image: gaurav375/linkedin-app/apigateway:dev
+    container_name: apigateway
+    networks:
+      - linkedin-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discoveryserver
+
+networks:
+  linkedin-network:
+
+volumes:
+  connections-db-data:
